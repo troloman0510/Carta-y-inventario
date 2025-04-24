@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Inicio de Sesión y Carta de Restaurante</title>
+  <style>
+    body {
+      font-family: 'Georgia', serif;
+      margin: 2rem;
+      background-image: url('https://png.pngtree.com/background/20210711/original/pngtree-restaurant-menu-background-material-picture-image_1077232.jpg');
+      background-size: cover;
+      background-position: center;
+      color: white;
+      padding: 2rem;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+    h1 {
+      text-align: center;
+      font-size: 3rem;
+      color: #f39c12;
+      text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.6);
+      margin-bottom: 4rem; /* Título mucho más abajo */
+      margin-top: 8rem;  /* Colocando el título mucho más abajo */
+    }
+    .form-container {
+      background-color: rgba(0, 0, 0, 0.7);
+      padding: 2rem;
+      border-radius: 10px;
+      margin-bottom: 2rem;
+      max-width: 400px;
+      width: 100%;
+      box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.8);
+    }
+    input[type="text"], input[type="password"], select {
+      padding: 0.7rem;
+      margin: 0.5rem 0;
+      width: 100%;
+      border-radius: 5px;
+      border: 1px solid #f39c12;
+      background-color: rgba(255, 255, 255, 0.9);
+    }
+    button {
+      padding: 0.7rem 1.5rem;
+      margin-top: 1rem;
+      background-color: #f39c12;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+    button:hover {
+      background-color: #e67e22;
+    }
+    #carta {
+      display: none;
+      text-align: center;
+    }
+    .carta-container {
+      background-color: rgba(0, 0, 0, 0.7);
+      padding: 2rem;
+      border-radius: 10px;
+      margin-top: 2rem;
+      width: 100%;
+      max-width: 900px;
+      box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.8);
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 2rem;
+      background-color: rgba(0, 0, 0, 0.5);
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 1rem;
+      text-align: center;
+      font-size: 1rem;
+    }
+    th {
+      background-color: rgba(0, 0, 0, 0.7);
+      color: #f39c12;
+      font-weight: bold;
+    }
+    td {
+      background-color: rgba(0, 0, 0, 0.6);
+    }
+    #infoUsuario {
+      font-size: 1.2rem;
+      color: #f39c12;
+      font-weight: bold;
+      margin-bottom: 3rem; /* Mensaje de bienvenida más abajo */
+    }
+    .form-container-select {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 2rem;
+    }
+    select {
+      padding: 0.7rem;
+      margin: 1rem 0;
+      width: 45%;
+      border-radius: 5px;
+      background-color: rgba(255, 255, 255, 0.9);
+    }
+    .producto-info {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 10px;
+    }
+    .producto-info input {
+      width: 45%;
+    }
+    .search-bar {
+      margin-bottom: 1rem;
+      padding: 0.7rem;
+      width: 100%;
+      max-width: 400px;
+      border-radius: 5px;
+      border: 1px solid #f39c12;
+      background-color: rgba(255, 255, 255, 0.9);
+    }
+    #logoutButton {
+      position: absolute;
+      top: 10px;
+      right: 20px;
+      background-color: #e74c3c;
+      border: none;
+      color: white;
+      padding: 10px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    #logoutButton:hover {
+      background-color: #c0392b;
+    }
+  </style>
+</head>
+<body>
+
+<div id="inicioSesion">
+  <h1>Inicio de Sesión</h1>
+  <div class="form-container">
+    <form id="loginForm">
+      <input type="text" id="nombre" placeholder="Nombre" required>
+      <input type="password" id="codigo" placeholder="Código" required>
+      <select id="rol" required>
+        <option value="camarero">Camarero</option>
+        <option value="jefatura">Jefatura</option>
+      </select>
+      <button type="submit">Iniciar sesión</button>
+    </form>
+  </div>
+</div>
+
+<div id="carta">
+  <button id="logoutButton" onclick="cerrarSesion()">Cerrar sesión</button>
+  <h1>Carta y Inventario</h1>
+  <div id="infoUsuario"></div>
+
+  <!-- Barra de búsqueda -->
+  <input type="text" id="searchInput" class="search-bar" placeholder="Buscar producto..." />
+
+  <!-- Contenedor para agregar productos y ordenar -->
+  <div class="form-container-select">
+    <!-- Formulario de agregar producto (solo visible para Jefatura) -->
+    <div id="formularioJefatura" class="form-container" style="width: 48%; margin-right: 2%;">
+      <h2>Agregar Producto</h2>
+      <form id="formularioProducto">
+        <input type="text" id="producto" placeholder="Nombre del producto" required>
+        <input type="text" id="categoria" placeholder="Categoría" required>
+        <div class="producto-info">
+          <input type="number" id="cantidad" placeholder="Cantidad" required min="1">
+          <input type="number" id="precio" placeholder="Precio (€)" required min="0" step="0.01">
+        </div>
+        <button type="submit">Agregar al inventario</button>
+      </form>
+    </div>
+
+    <!-- Selección de ordenar productos (movido a la derecha junto con el formulario de agregar) -->
+    <div class="form-container" style="width: 48%;">
+      <h3>Ordenar Productos</h3>
+      <select id="ordenarPor">
+        <option value="nombre">Por Nombre (A-Z)</option>
+        <option value="categoria">Por Categoría</option>
+        <option value="personalizado">Personalizado</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="carta-container">
+    <table id="tablaInventario">
+      <thead>
+        <tr>
+          <th>Producto</th>
+          <th>Categoría</th>
+          <th>Cantidad</th>
+          <th>Precio</th>
+          <th>Último cambio por</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+  let inventario = JSON.parse(localStorage.getItem("inventario")) || [];
+  const tabla = document.querySelector("#tablaInventario tbody");
+  const loginForm = document.getElementById('loginForm');
+  const inicioSesionDiv = document.getElementById('inicioSesion');
+  const cartaDiv = document.getElementById('carta');
+  const infoUsuario = document.getElementById('infoUsuario');
+  const formularioJefatura = document.getElementById('formularioJefatura');
+  const ordenarPorSelect = document.getElementById('ordenarPor');
+  const searchInput = document.getElementById('searchInput');
+  const logoutButton = document.getElementById('logoutButton');
+
+  // Función para mostrar información de usuario
+  function mostrarInformacionUsuario() {
+    const nombre = localStorage.getItem('nombre');
+    const rol = localStorage.getItem('rol');
+    infoUsuario.innerText = `Bienvenido, ${nombre} (${rol})`;
+
+    if (rol === 'jefatura') {
+      formularioJefatura.style.display = 'block';
+    } else {
+      formularioJefatura.style.display = 'none';
+    }
+  }
+
+  // Función para actualizar la tabla de inventario
+  function actualizarTabla(orden = 'nombre', filtro = '') {
+    tabla.innerHTML = "";
+    let productosOrdenados = [...inventario];
+
+    if (orden === 'nombre') {
+      productosOrdenados.sort((a, b) => a.producto.localeCompare(b.producto));
+    } else if (orden === 'categoria') {
+      productosOrdenados.sort((a, b) => a.categoria.localeCompare(b.categoria));
+    }
+
+    // Filtrar productos por nombre
+    if (filtro) {
+      productosOrdenados = productosOrdenados.filter(item => 
+        item.producto.toLowerCase().includes(filtro.toLowerCase())
+      );
+    }
+
+    productosOrdenados.forEach((item, index) => {
+      const fila = document.createElement("tr");
+      const cantidadColor = item.cantidad < 20 ? '#e74c3c' : item.cantidad < 50 ? '#f39c12' : '#2ecc71';
+      fila.innerHTML = `
+        <td>${item.producto}</td>
+        <td>${item.categoria}</td>
+        <td style="background-color: ${cantidadColor};">${item.cantidad}</td>
+        <td>${item.precio} €</td>
+        <td>${item.persona}</td>
+        <td>
+          <button onclick="cambiarCantidad(${index}, 1)">+</button>
+          <button onclick="cambiarCantidad(${index}, -1)">-</button>
+          <button onclick="guardarCambio(${index})">Guardar cambios</button>
+          <button onclick="borrarProducto(${index})">Borrar</button>
+        </td>
+      `;
+      tabla.appendChild(fila);
+    });
+
+    localStorage.setItem("inventario", JSON.stringify(inventario));
+  }
+
+  // Función para cambiar la cantidad de un producto
+  function cambiarCantidad(index, delta) {
+    inventario[index].cantidad += delta;
+    if (inventario[index].cantidad < 0) inventario[index].cantidad = 0;
+    actualizarTabla();
+  }
+
+  // Función para guardar cambios
+  function guardarCambio(index) {
+    inventario[index].persona = localStorage.getItem('nombre'); // Usa el nombre del usuario al guardar
+    actualizarTabla();
+  }
+
+  // Función para borrar un producto
+  function borrarProducto(index) {
+    const confirmar = confirm("¿Estás seguro de que deseas borrar este producto?");
+    if (confirmar) {
+      inventario.splice(index, 1);
+      actualizarTabla();
+    }
+  }
+
+  // Verificar si el usuario ya está logueado
+  window.onload = function () {
+    const nombre = localStorage.getItem('nombre');
+    if (nombre) {
+      // El usuario ya está logueado
+      inicioSesionDiv.style.display = 'none';
+      cartaDiv.style.display = 'block';
+      mostrarInformacionUsuario();
+      actualizarTabla();
+    } else {
+      // Si no está logueado, mostrar el formulario de inicio de sesión
+      inicioSesionDiv.style.display = 'block';
+      cartaDiv.style.display = 'none';
+    }
+  }
+
+  // Función para iniciar sesión
+  loginForm.addEventListener('submit', function (event) {
+    event.preventDefault();
+    const nombre = document.getElementById('nombre').value;
+    const codigo = document.getElementById('codigo').value;
+    const rol = document.getElementById('rol').value;
+
+    if (codigo === 'Dan') {
+      localStorage.setItem('nombre', nombre);
+      localStorage.setItem('rol', rol);
+      inicioSesionDiv.style.display = 'none';
+      cartaDiv.style.display = 'block';
+      mostrarInformacionUsuario();
+      actualizarTabla();
+    } else {
+      alert("Código incorrecto");
+    }
+  });
+
+  // Ordenar productos por categoría o nombre
+  ordenarPorSelect.addEventListener('change', function () {
+    const orden = ordenarPorSelect.value;
+    actualizarTabla(orden);
+  });
+
+  // Función para añadir productos al inventario
+  formularioProducto.addEventListener('submit', function (event) {
+    event.preventDefault();
+    const producto = document.getElementById('producto').value;
+    const categoria = document.getElementById('categoria').value;
+    const cantidad = parseInt(document.getElementById('cantidad').value, 10);
+    const precio = parseFloat(document.getElementById('precio').value);
+    const persona = localStorage.getItem('nombre'); // Persona que añade el producto
+
+    const nuevoProducto = { producto, categoria, cantidad, precio, persona };
+    inventario.push(nuevoProducto);
+    // Limpiar formulario
+    document.getElementById('producto').value = '';
+    document.getElementById('categoria').value = '';
+    document.getElementById('cantidad').value = '';
+    document.getElementById('precio').value = '';
+    actualizarTabla();
+  });
+
+  // Barra de búsqueda
+  searchInput.addEventListener('input', function () {
+    const filtro = searchInput.value;
+    actualizarTabla('nombre', filtro);
+  });
+
+  // Cerrar sesión
+  function cerrarSesion() {
+    localStorage.removeItem('nombre');
+    localStorage.removeItem('rol');
+    inicioSesionDiv.style.display = 'block';
+    cartaDiv.style.display = 'none';
+  }
+</script>
+
+</body>
+</html>
